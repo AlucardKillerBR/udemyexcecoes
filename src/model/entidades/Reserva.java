@@ -6,6 +6,8 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+import model.exceptions.DomainException;
+
 public class Reserva {
 
 	private Integer numeroQuarto;
@@ -17,7 +19,10 @@ public class Reserva {
 	public Reserva() {
 	}
 
-	public Reserva(Integer numeroQuarto, Date checkin, Date checkout) {
+	public Reserva(Integer numeroQuarto, Date checkin, Date checkout) throws DomainException {
+		if (!checkout.after(checkin)) {
+			throw new DomainException("Erro na reserva: Data de checkout deve ser posterior a data de Checkin");
+		}
 		this.numeroQuarto = numeroQuarto;
 		this.checkin = checkin;
 		this.checkout = checkout;
@@ -47,20 +52,20 @@ public class Reserva {
 		return qtdDias;
 	}
 
-	public String atualizarData(Date checkin, Date checkout) {
+	public void atualizarData(Date checkin, Date checkout) throws DomainException {
 		
 		Date agora = new Date();
 		
 		if (checkin.before(agora) || checkout.before(agora)) {
-			return "Erro na reserva: As datas para atualizaçao devem ser futuras";
+			throw new DomainException("Erro na reserva: As datas para atualizaçao devem ser futuras") ;
 		} 
 		if (!checkout.after(checkin)) {
-			return "Erro na reserva: Data de checkout deve ser posterior a data de Checkin";
+			throw new DomainException("Erro na reserva: Data de checkout deve ser posterior a data de Checkin");
 		}		
 		this.checkin = checkin;
 		this.checkout = checkout;
 		
-		return null;
+		
 		
 	}
 
